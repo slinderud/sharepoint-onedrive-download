@@ -45,7 +45,6 @@ def getCookiesWithPassword(link: str, password: str):
         webdavEndpoint = match.group(1) + "/" + "/".join(params["id"][0].split("/")[3:])
     return r, f"FedAuth={r.cookies.get_dict()['FedAuth']};", webdavEndpoint
 
-
 def set_default(ctx, param, value):
     if os.path.exists(value):
         with open(value, 'r') as f:
@@ -53,15 +52,11 @@ def set_default(ctx, param, value):
         ctx.default_map = config
     return value
 
-
 @click.command(context_settings={'auto_envvar_prefix': 'DL'})  # this allows for environment variables
-@click.option('--config', default='config.yml', type=click.Path(),
-              callback=set_default, is_eager=True, expose_value=False)
+@click.option('--config', default='config.yml', type=click.Path(), callback=set_default, is_eager=True, expose_value=False)
 @ click.option('--outfolder', '-o', required=True, help="Folder where files should end up")
-@ click.option(
-    '--password', '-p', required=True, help="Password for shared onedrive")
-@ click.option(
-    '--url', '-u', required=True, help="Link to sharepoint/onedrive site")
+@ click.option('--password', '-p', required=True, help="Password for shared onedrive")
+@ click.option('--url', '-u', required=True, help="Link to sharepoint/onedrive site")
 def main(outfolder, password, url):
     first_r, cookieString, webdavEndpoint = getCookiesWithPassword(url, password)
     fullEncodedPath = re.search("^.*?id=(.*?)&ga=1$", first_r.url).group(1)
@@ -87,11 +82,8 @@ def main(outfolder, password, url):
         f.write(f"headers = Cookie,{cookieString}")
 
     Path(out).mkdir(parents=True, exist_ok=True)
-    rclone.copy(f"{rootFolder}:", out, args=[' --config', 'sharepoint_rclone.conf'], pbar=pbar)
+    rclone.copy(f"{rootFolder}:", out, args=[' --config', 'sharepoint_rclone.conf', '--multi-thread-streams', '0'], pbar=pbar)
 
 
 if __name__ == "__main__":
     main()
-
-
-

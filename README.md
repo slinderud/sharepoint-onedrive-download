@@ -40,7 +40,6 @@ $ python3 download.py --config config.yml
 DL_URL=https://x.sharepoint.com/:f:/g/personal/y/a?e=f DL_PASSWORD=supersecretpassword DL_OUTFOLDER=testdownload python3 download.py
 ```
 
-
 ## Credit
 
 Code inspired and borrowed from
