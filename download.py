@@ -1,6 +1,12 @@
 import requests
 import re
 import click
+import os
+from yaml import load
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    from yaml import Loader
 from bs4 import BeautifulSoup
 from time import sleep
 from pprint import pprint
@@ -39,7 +45,18 @@ def getCookiesWithPassword(link: str, password: str):
         webdavEndpoint = match.group(1) + "/" + "/".join(params["id"][0].split("/")[3:])
     return r, f"FedAuth={r.cookies.get_dict()['FedAuth']};", webdavEndpoint
 
-@click.command("download")
+
+def set_default(ctx, param, value):
+    if os.path.exists(value):
+        with open(value, 'r') as f:
+            config = load(f.read(), Loader=Loader)
+        ctx.default_map = config
+    return value
+
+
+@click.command(context_settings={'auto_envvar_prefix': 'DL'})  # this allows for environment variables
+@click.option('--config', default='config.yml', type=click.Path(),
+              callback=set_default, is_eager=True, expose_value=False)
 @ click.option('--outfolder', '-o', required=True, help="Folder where files should end up")
 @ click.option(
     '--password', '-p', required=True, help="Password for shared onedrive")
@@ -72,5 +89,9 @@ def main(outfolder, password, url):
     Path(out).mkdir(parents=True, exist_ok=True)
     rclone.copy(f"{rootFolder}:", out, args=[' --config', 'sharepoint_rclone.conf'], pbar=pbar)
 
+
 if __name__ == "__main__":
     main()
+
+
+

@@ -2,4 +2,5 @@ rich
 click
 bs4
 lxlm
+pyyaml
 git+https://github.com/Johannes11833/rclone_python@master
