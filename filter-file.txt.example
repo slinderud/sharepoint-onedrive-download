@@ -1,0 +1,9 @@
+# a sample filter rule file
+- secret*.jpg
++ *.jpg
++ *.png
++ file2.avi
+- /dir/Trash/**
++ /dir/**
+# exclude everything else
+- *

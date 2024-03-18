@@ -1,3 +1,4 @@
-outfolder: 123
-password: supersecret
+outfolder: testdownload
+password: supersecretpassword
 url: https://x.sharepoint.com/:f:/g/personal/y/a?e=f
+filter_file: filter-file.txt.example
