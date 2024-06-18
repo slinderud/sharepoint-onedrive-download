@@ -55,16 +55,19 @@ def set_default(ctx, param, value):
 @ click.command(context_settings={'auto_envvar_prefix': 'DL'})  # this allows for environment variables
 @ click.option('--config', '-c', help="Path to config file", default='config.yml', type=click.Path(), callback=set_default, is_eager=True, expose_value=False)
 @ click.option('--outfolder', '-o', required=True, help="Folder where files should end up")
+@ click.option('--name', '-n', help="Folder name")
 @ click.option('--password', '-p', required=True, help="Password for shared onedrive")
 @ click.option('--url', '-u', required=True, help="Link to sharepoint/onedrive site")
 @ click.option('--multi-threaded-download', '-m', help="Enable multi threaded download. Please see readme for bug info", is_flag=True)
 @ click.option('--filter-file', '-f', help="Rclone filter file",type=click.Path(exists=True))
-def main(outfolder, password, url, multi_threaded_download, filter_file):
+def main(outfolder, password, url, multi_threaded_download, filter_file, name):
     first_r, cookieString, webdavEndpoint = getCookiesWithPassword(url, password)
     fullEncodedPath = re.search("^.*?id=(.*?)&ga=1$", first_r.url).group(1)
-    rootFolder = unquote(fullEncodedPath.rsplit("%2F", 1)[1])
+    folderName = unquote(fullEncodedPath.rsplit("%2F", 1)[1])
+    if name:
+        folderName = name
 
-    out = f"{outfolder}/{rootFolder}"
+    out = f"{outfolder}/{folderName}"
     Path(out).mkdir(parents=True, exist_ok=True)
 
     pbar = Progress(
@@ -78,7 +81,7 @@ def main(outfolder, password, url, multi_threaded_download, filter_file):
     )
 
     with open("sharepoint_rclone.conf", mode="w") as f:
-        f.write(f"[{rootFolder}]\n")
+        f.write(f"[{folderName}]\n")
         f.write("type = webdav\n")
         f.write(f"url = {webdavEndpoint}\n")
         f.write("vendor = other\n")
@@ -94,7 +97,7 @@ def main(outfolder, password, url, multi_threaded_download, filter_file):
     if filter_file:
         args = args + ['--filter-from', filter_file]
 
-    rclone.copy(f"{rootFolder}:", out, args=args, pbar=pbar)
+    rclone.copy(f"{folderName}:", out, args=args, pbar=pbar)
 
 if __name__ == "__main__":
     main()

@@ -10,6 +10,7 @@ Usage: download.py [OPTIONS]
 Options:
   -c, --config PATH              Path to config file
   -o, --outfolder TEXT           Folder where files should end up  [required]
+  -n, --name TEXT                Folder name
   -p, --password TEXT            Password for shared onedrive  [required]
   -u, --url TEXT                 Link to sharepoint/onedrive site  [required]
   -m, --multi-threaded-download  Enable multi threaded download. Please see
@@ -31,6 +32,7 @@ python3 download.py -u https://x.sharepoint.com/:f:/g/personal/y/a?e=f -p supers
 ```sh
 $ cat config.yml
 outfolder: testdownload
+name: foldername
 password: supersecretpassword
 url: https://x.sharepoint.com/:f:/g/personal/y/a?e=f
 filter_file: filter-file.txt.example
